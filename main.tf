@@ -42,7 +42,7 @@ resource "aws_autoscaling_group" "bar" {
 
   tag {
     key = "Name"
-    value = "Proyecto-Ada"
+    value = "Proyecto_Super_Mario.2022"
     propagate_at_launch = true
   }
 }

@@ -15,31 +15,33 @@ data "aws_subnet_ids" "subnet" {
   vpc_id = data.aws_vpc.default.id
 }
 
-resource "aws_alb_target_group" "group" {
-  name     = "SuperMarioTargetGroup"
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = "${aws_vpc.vpc.id}"
-  stickiness {
-    type = "lb_cookie"
-  }
- 
-  health_check {
-    path = "/"
+resource "aws_alb_target_group" "target-group" {
+    health_check {
+      interval = 10
+      path = "/"
+      protocol = "HTTP"
+      timeout = 5
+      healthy_threshold = 5
+      unhealthy_threshold = 2
+    } 
+    
+      
+
+    name ="SuperMarioTargetGroup"
     port = 5000
-    interval = 10
-    timeout = 5
-    healthy_threshold = 5
-    unhealthy_threshold = 2
-  }
-
-  target_type = "instance"
-
+    protocol = "HTTP"
+    target_type = "instance"
+    vpc_id = data.aws_vpc.default.id
+    stickiness {
+      type = "lb_cookie"
+    }
+    
+  
 }
 
 #Instance Attachment
 resource "aws_autoscaling_attachment" "svc_asg_external2" {
-  alb_target_group_arn = "${aws_alb_target_group.group.arn }"
+  alb_target_group_arn = "${aws_alb_target_group.target-group.arn }"
   autoscaling_group_name = "${aws_autoscaling_group.bar.id}" 
   
 }
@@ -58,13 +60,17 @@ resource "aws_alb" "application-alb" {
 
 }
 
+
 resource "aws_alb_listener" "alb-listener" {
     load_balancer_arn = aws_alb.application-alb.arn 
     port              = 80
     protocol          = "HTTP"
     default_action{
-        target_group_arn = aws_alb_target_group.group.arn 
+        target_group_arn = aws_alb_target_group.target-group.arn 
         type = "forward"
     } 
+
+  
 }
+
 

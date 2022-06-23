@@ -28,7 +28,7 @@ resource "aws_alb_target_group" "target-group" {
       
 
     name ="SuperMarioTargetGroup"
-    port = 5000
+    port = 8600
     protocol = "HTTP"
     target_type = "instance"
     vpc_id = data.aws_vpc.default.id

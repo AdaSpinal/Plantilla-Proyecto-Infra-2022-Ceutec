@@ -22,11 +22,12 @@ resource "aws_launch_template" "SM" {
   key_name = "Llave-Ada"
 
   vpc_security_group_ids = ["sg-04beabb75f4b4d46b"]
-
+  user_data = "${filebase64("userdata.sh")}"
     tags = {
       Name = "Super_Mario_2022"
     }
 }
+
 
 resource "aws_autoscaling_group" "bar" {
   name= "AG-SuperMario-Ada"
@@ -45,5 +46,7 @@ resource "aws_autoscaling_group" "bar" {
     value = "Proyecto_Super_Mario.2022"
     propagate_at_launch = true
   }
+  
+
 }
 

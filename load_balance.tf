@@ -39,31 +39,32 @@ resource "aws_alb_target_group" "group" {
 
 #Instance Attachment
 resource "aws_autoscaling_attachment" "svc_asg_external2" {
-  alb_target_group_arn = "${aws_alb_target_group.group.arn}"
+  alb_target_group_arn = "${aws_alb_target_group.group.arn }"
   autoscaling_group_name = "${aws_autoscaling_group.bar.id}" 
   
 }
 
 resource "aws_alb" "application-alb" {
     name = "LB-ProyectoSuperMario"
-    internal = false
+    internal  = false
     ip_address_type = "ipv4"
-    load_balancer_type ="application"
+    load_balancer_type = "application"
     security_groups = ["sg-028e0d5f7222fc799"]
-    subnets = data.aws_subnet_ids.subnet.ids 
+    subnets = data.aws_subnet_ids.subnet.ids
 
         tags = {
-          Name = "whiz-alb"
+          Name = "App alb"
         }
 
 }
 
 resource "aws_alb_listener" "alb-listener" {
-  load_balancer_arn  = aws_alb.application-alb.arn
-  port = 80
-  protocol = "HTTP"
-    default_action {
-        target_group_arn = "${aws_alb_target_group.group.arn}"
+    load_balancer_arn = aws_alb.application-alb.arn 
+    port              = 80
+    protocol          = "HTTP"
+    default_action{
+        target_group_arn = aws_alb_target_group.group.arn 
         type = "forward"
-    }
+    } 
 }
+
